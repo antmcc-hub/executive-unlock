@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Executive Unlock — Leveragentic.AI</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface-hover: #222633;
+    --border: #2a2e3b;
+    --text: #e4e4e7;
+    --text-muted: #9ca3af;
+    --accent: #c49a6c;
+    --accent-light: #d4b08c;
+    --green: #4ade80;
+    --blue: #60a5fa;
+    --purple: #a78bfa;
+    --voice: #f59e0b;
+    --red: #f87171;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .container { max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  header {
+    text-align: center;
+    padding: 3rem 0 2rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+  }
+
+  header h1 { font-size: 2.2rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+  header h1 span { color: var(--accent); }
+  header p { color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+
+  .stage {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .stage:hover { border-color: var(--accent); }
+
+  .stage-header {
+    padding: 1.25rem 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    user-select: none;
+  }
+
+  .stage-number {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--accent); color: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.9rem; flex-shrink: 0;
+  }
+
+  .stage-title { font-size: 1.15rem; font-weight: 600; flex: 1; }
+  .stage-subtitle { font-size: 0.85rem; color: var(--text-muted); }
+  .stage-chevron { font-size: 1.2rem; color: var(--text-muted); transition: transform 0.2s; }
+  .stage.open .stage-chevron { transform: rotate(90deg); }
+
+  .stage-body { display: none; padding: 0 1.5rem 1.5rem; }
+  .stage.open .stage-body { display: block; }
+
+  .stage-intro { color: var(--text-muted); margin-bottom: 1.25rem; font-size: 0.95rem; }
+
+  .prompt-card {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 1rem 1.25rem; margin-bottom: 1rem; position: relative;
+  }
+
+  .prompt-label {
+    font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.05em; margin-bottom: 0.5rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .prompt-label.copy-prompt { color: var(--green); }
+  .prompt-label.voice-script { color: var(--voice); }
+  .prompt-label.what-happens { color: var(--blue); }
+  .prompt-label.tip { color: var(--purple); }
+  .prompt-label.table-card { color: var(--accent); }
+
+  .prompt-text {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.9rem; line-height: 1.5; white-space: pre-wrap; color: var(--text);
+  }
+  .voice-text { font-style: italic; font-size: 0.95rem; line-height: 1.6; color: var(--text); }
+  .outcome-text { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+
+  .copy-btn {
+    position: absolute; top: 0.75rem; right: 0.75rem;
+    background: var(--surface); border: 1px solid var(--border); color: var(--text-muted);
+    padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.75rem;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .copy-btn:hover { background: var(--surface-hover); color: var(--text); }
+  .copy-btn.copied { background: var(--green); color: var(--bg); border-color: var(--green); }
+
+  /* Checkboxes */
+  .checkbox-group { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+  .checkbox-label {
+    display: flex; align-items: center; gap: 0.5rem;
+    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 0.6rem 1rem; cursor: pointer; transition: all 0.15s; font-size: 0.9rem;
+  }
+  .checkbox-label:hover { border-color: var(--accent); }
+  .checkbox-label input { accent-color: var(--accent); width: 16px; height: 16px; cursor: pointer; }
+  .checkbox-label.checked { border-color: var(--accent); background: var(--surface-hover); }
+
+  /* Table styling */
+  .comparison-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 0.5rem; }
+  .comparison-table th {
+    background: var(--surface-hover); padding: 0.6rem 0.75rem; text-align: left;
+    border-bottom: 1px solid var(--border); font-weight: 600; color: var(--accent);
+  }
+  .comparison-table td {
+    padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); color: var(--text-muted);
+    vertical-align: top;
+  }
+  .comparison-table tr:hover td { background: var(--surface-hover); }
+
+  /* Break divider */
+  .break-divider {
+    text-align: center; padding: 2.5rem 1.5rem; margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, var(--surface) 0%, #1e2233 100%);
+    border: 2px solid var(--accent); border-radius: 12px;
+  }
+  .break-divider h2 { color: var(--accent); font-size: 1.4rem; margin-bottom: 0.5rem; }
+  .break-divider p { color: var(--text-muted); font-size: 0.95rem; max-width: 550px; margin: 0 auto; }
+
+  .progress-bar { display: flex; gap: 4px; margin-bottom: 2rem; padding: 0 0.5rem; }
+  .progress-dot { flex: 1; height: 4px; border-radius: 2px; background: var(--border); transition: background 0.3s; }
+  .progress-dot.active { background: var(--accent); }
+  .progress-dot.break-dot { background: var(--border); border-top: 2px solid var(--accent); }
+
+  footer { text-align: center; padding: 3rem 0 2rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+  footer p { color: var(--text-muted); font-size: 0.85rem; }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 600px) {
+    .container { padding: 1rem; }
+    header h1 { font-size: 1.6rem; }
+    .stage-header { padding: 1rem; }
+    .stage-body { padding: 0 1rem 1rem; }
+    .checkbox-group { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>Executive <span>Unlock</span></h1>
+    <p>Your guided path from AI curiosity to daily operating advantage. Works with whatever AI tools you have today — and builds toward something more powerful.</p>
+  </header>
+
+  <div class="progress-bar" id="progressBar"></div>
+  <div id="stages"></div>
+
+  <footer>
+    <p><a href="https://leveragentic.ai">Leveragentic.AI</a> — From AI Ambition to Agentic Equity</p>
+    <p style="margin-top: 0.5rem;">Book your Executive Unlock: <a href="https://calendly.com/ant-mccallum/30min">calendly.com/ant-mccallum</a></p>
+  </footer>
+</div>
+
+<script>
+// State for checkboxes
+const userEnv = { o365: false, google: false, chatgpt: false };
+
+const stages = [
+  {
+    id: "first-contact",
+    title: "First Contact",
+    subtitle: "Remove the intimidation",
+    intro: "AI is a conversation, not a command line. Open whatever AI tool you have — ChatGPT, Gemini, Copilot, Claude — and paste this in. No special syntax. No magic words. Just talk to it like a smart colleague.",
+    cards: [
+      {
+        type: "copy-prompt",
+        label: "Copy & Paste This Into Any AI Tool",
+        text: `I'm going to paste an email I received. Can you:\n1. Summarise the key points in 2-3 bullet points\n2. Flag anything that needs my attention or decision\n3. Draft a brief, professional reply\n\nHere's the email:\n[paste your email here]`
+      },
+      {
+        type: "what-happens",
+        label: "What You'll See",
+        text: "The AI breaks the email into clear points, highlights what matters, and drafts a reply you can edit and send. If anything is unclear, a good AI will ask rather than guess. This works in ChatGPT, Gemini, Copilot, or Claude — try it in whichever you have open."
+      },
+      {
+        type: "tip",
+        label: "Pro Tip",
+        text: "Try pasting something real — a vendor email, a board paper summary request, even a meeting invite you need to decline gracefully. Real tasks teach faster than toy examples."
+      }
+    ]
+  },
+  {
+    id: "19-token",
+    title: "The 19-Token Prompt",
+    subtitle: "The single most important AI technique",
+    intro: "This one prompt will save you more time than any other technique. It works in every AI tool. It stops the AI from pattern-matching to the wrong interpretation and producing 2,000 words of beautifully written wrong answer.",
+    cards: [
+      {
+        type: "copy-prompt",
+        label: "Copy & Paste This (Use Before Any Big Request)",
+        text: `Don't do anything yet. Explain what you think I'm asking for and wait for me to confirm or clarify.`
+      },
+      {
+        type: "what-happens",
+        label: "What You'll See",
+        text: "Instead of 2,000 tokens of confidently incorrect output, you get 50 tokens clarifying intent. \"It sounds like you want X. Should I proceed, or did you mean Y?\" This saves 10-30 minutes of backtracking on complex tasks. Works in any AI tool."
+      },
+      {
+        type: "copy-prompt",
+        label: "Example: Using It For a Real Task",
+        text: `Don't do anything yet. Explain what you think I'm asking for and wait for me to confirm or clarify.\n\nI need to put together something for the board about our AI readiness. They're meeting next Thursday and the CEO wants to show we have a plan.`
+      },
+      {
+        type: "tip",
+        label: "When to Use This",
+        text: "Use it for anything that takes the AI more than 30 seconds to produce. Quick questions don't need it. Strategy documents, reports, proposals, analyses — always start with this. It works identically in ChatGPT, Gemini, Copilot, and Claude."
+      }
+    ]
+  },
+  {
+    id: "ai-landscape",
+    title: "Your AI Landscape",
+    subtitle: "Map what you already have access to",
+    intro: "You probably have more AI capability than you realise. Tick what applies to you — the prompt below will adapt to your environment.",
+    customRender: true,
+    renderFn: "renderAILandscape"
+  },
+  {
+    id: "model-modes",
+    title: "How AI Models Work",
+    subtitle: "Speed, quality, and knowing which to use",
+    intro: "Every major AI platform offers models at different speeds and capabilities. Knowing when to use which is the difference between a quick answer and a considered analysis. Here's the landscape across all three platforms.",
+    cards: [
+      {
+        type: "table-card",
+        label: "AI Model Comparison — March 2026",
+        html: `<table class="comparison-table">
+          <tr><th>Tier</th><th>Claude</th><th>ChatGPT</th><th>Gemini</th><th>Best For</th></tr>
+          <tr><td><strong>Fast</strong></td><td>Haiku</td><td>GPT-4o mini</td><td>Gemini Flash</td><td>Quick lookups, reformatting, simple questions. Seconds.</td></tr>
+          <tr><td><strong>Standard</strong></td><td>Sonnet</td><td>GPT-4o</td><td>Gemini Pro</td><td>Day-to-day work — writing, analysis, email, summaries. The workhorse.</td></tr>
+          <tr><td><strong>Reasoning</strong></td><td>Opus</td><td>o1 / o3</td><td>Gemini Ultra</td><td>Complex decisions, strategy, multi-step analysis. Shows working.</td></tr>
+          <tr><td><strong>Images</strong></td><td>—</td><td>DALL-E / GPT-4o</td><td>Imagen</td><td>Generate images for docs, presentations, marketing.</td></tr>
+        </table>`
+      },
+      {
+        type: "copy-prompt",
+        label: "Try This Same Question Across Different Tiers",
+        text: `What are the three biggest risks to a mid-market services company ($50-200M revenue) in Australia over the next 12 months? For each risk, give me one specific action I could take this quarter to mitigate it.\n\nBe specific to Australia and the mid-market — not generic global advice.`
+      },
+      {
+        type: "what-happens",
+        label: "What You'll See",
+        text: "Fast tier: Quick bullet points, broadly correct but generic.\nStandard tier: Solid analysis with Australian-specific context, reasonable actions.\nReasoning tier: Nuanced thinking that considers second-order effects, industry-specific risks, and actions that account for implementation reality."
+      },
+      {
+        type: "tip",
+        label: "Image Generation for Business",
+        text: "Need visuals for a presentation or document? ChatGPT (DALL-E) and Gemini (Imagen) can generate custom images — diagrams, illustrations, hero graphics. Describe what you need, generate it there, then drop it into your Word doc or PowerPoint. Use each tool for what it does best."
+      }
+    ]
+  },
+  {
+    id: "voice-first",
+    title: "Voice-First Workflow",
+    subtitle: "Talk, don't type",
+    intro: "Most executives think faster than they type. Voice memos are the fastest way to get your thoughts into AI. Record a rambling voice note, transcribe it, then let AI extract the signal from the noise.",
+    cards: [
+      {
+        type: "voice-script",
+        label: "Quick 5 — Your First Voice-to-AI Exercise (Under 5 Minutes)",
+        text: "Step 1: Open your phone's voice recorder (or Voice Memos on iPhone).\nStep 2: Record yourself answering this question for 60 seconds: \"What's the one thing on my plate right now that I keep avoiding? Why am I avoiding it? What would 'done' look like?\"\nStep 3: Use your phone's built-in transcription, or paste the audio into ChatGPT/Gemini.\nStep 4: Paste the transcript into any AI with the prompt below.\n\nThat's it. Five minutes, start to finish."
+      },
+      {
+        type: "copy-prompt",
+        label: "Quick 5 Prompt — Paste After Your 60-Second Recording",
+        text: `I just recorded a quick voice memo about something I've been avoiding at work. Clean up the transcription and give me:\n1. The core issue in one sentence\n2. Why I'm probably avoiding it (based on what I said)\n3. The smallest possible next step I could take in the next 30 minutes\n\nDon't overthink it. Keep it short.\n\n[paste transcription here]`
+      },
+      {
+        type: "voice-script",
+        label: "Full Voice Memo Script — Record This (90 Seconds)",
+        text: "\"I just came out of the leadership meeting and there are a few things I need to think through. First, [describe a decision you're facing]. The options seem to be [option A] or [option B], but I'm not sure we've thought about [concern]. Second, I told [person] I'd get back to them about [topic] by [date] — I need to figure out what to say. And third, there was something about [project] that didn't sit right with me but I can't quite put my finger on it — something about the timeline or the resourcing.\""
+      },
+      {
+        type: "copy-prompt",
+        label: "Full Voice Memo Prompt — Paste After Transcribing",
+        text: `Clean up this voice memo transcription. I was thinking out loud after a meeting.\n\nExtract:\n1. Decisions I need to make (with the options I mentioned)\n2. Commitments I made to people (with deadlines)\n3. Concerns or gut feelings I flagged (even vague ones — capture them)\n4. Suggested next actions for each item\n\nDon't add anything I didn't say. Don't resolve my uncertainties for me — just organise them.\n\n[paste transcription here]`
+      },
+      {
+        type: "what-happens",
+        label: "What You'll See",
+        text: "Your ramble becomes a structured action list. Decisions are separated from commitments. Vague concerns are captured rather than dismissed. You get clarity without losing nuance. Works in any AI tool."
+      }
+    ]
+  },
+  {
+    id: "business-prompts",
+    title: "The Business Prompt Kit",
+    subtitle: "Apply AI to real work right now",
+    intro: "Four prompts for the highest-value executive use cases. Each works best with a real situation — not a hypothetical. Pick one that matches something on your plate today. These work in any AI tool.",
+    cards: [
+      {
+        type: "copy-prompt",
+        label: "1. Plan Stress-Tester — Before Any Big Commitment",
+        text: `I'm going to describe a plan I'm considering. Before you help me improve it, I need you to be genuinely critical.\n\nThe plan: [describe your plan]\nStakeholders: [who's involved or affected]\nStakes: [what happens if this goes wrong]\nConstraints: [budget, timeline, political realities]\n\nGive me:\n1. The three most likely ways this plan fails\n2. The assumption I'm making that I probably haven't tested\n3. The question someone will ask in the meeting that I don't have a good answer for yet\n4. One specific change that would meaningfully reduce the biggest risk`
+      },
+      {
+        type: "copy-prompt",
+        label: "2. Situation Briefer — Before Any Important Task",
+        text: `Before I ask you to produce anything, here's my situation — use every detail to shape your response.\n\nMy role: [your title and what you actually do]\nAudience: [who will see the output]\nStakes: [why this matters]\nConstraints: [what I can't change]\nPolitical landscape: [who supports this, who doesn't, who's undecided]\n\nNow, with all that context: [your actual request]`
+      },
+      {
+        type: "copy-prompt",
+        label: "3. Structural Editor — For Anything You've Already Written",
+        text: `I'm going to paste something I've written. Don't fix grammar or polish sentences — tell me what's structurally wrong.\n\nSpecifically:\n1. What's my weakest argument?\n2. What insight is buried that should be leading?\n3. Where does my logic contradict itself?\n4. What am I not saying that the reader will notice is missing?\n\nPreserve my voice. I want structural feedback, not a rewrite.\n\n[paste your draft here]`
+      },
+      {
+        type: "tip",
+        label: "Why Structural Editing Matters",
+        text: "Most people use AI to polish grammar. That's the least valuable thing it can do. The real leverage is structural feedback — does this argument hold together? Is the most important point leading or buried on page 3? AI can read your 20-page report in seconds and tell you where the logic breaks. This is the difference between using AI as a spell-checker and using it as a thinking partner."
+      },
+      {
+        type: "copy-prompt",
+        label: "4. Complex Reasoner — For High-Stakes Decisions",
+        text: `I'm going to describe a complex decision. Think through it carefully before answering — show me the tradeoffs you're weighing.\n\nThe decision: [describe it]\nOptions I see: [list them]\nWhat makes this hard: [the tension or tradeoff]\nTimeline: [when I need to decide]\n\nWalk me through your reasoning step by step. Flag your assumptions explicitly. Tell me what information would change your recommendation. I want to see the thinking, not just the answer.`
+      }
+    ]
+  },
+  {
+    id: "create-something",
+    title: "Create Something Real",
+    subtitle: "Build a document, presentation, or tool with AI",
+    intro: "Stop using AI just for conversation. Use it to produce real outputs — documents, presentations, spreadsheets, and simple tools. Here's how, using the software you already have.",
+    customRender: true,
+    renderFn: "renderCreateSomething"
+  },
+  {
+    id: "vibe-coding",
+    title: "Vibe Coding",
+    subtitle: "Build tools without writing code",
+    intro: "You don't need to be a developer to build internal tools. Replit Agent lets you describe what you want in plain English and iterates until it works. Think of it as telling a builder what you want — you describe the kitchen, they build it, you say \"actually, move the sink\" and they adjust.",
+    cards: [
+      {
+        type: "copy-prompt",
+        label: "Example: Build a Simple ROI Calculator",
+        text: `Build me a simple web-based calculator for our team to estimate AI automation ROI.\n\nInputs:\n- Number of employees affected\n- Average salary (AUD)\n- Estimated productivity gain (percentage slider, 5-30%)\n- Current EBITDA multiple\n\nOutputs:\n- Annual savings\n- Enterprise value uplift (savings x EBITDA multiple)\n- Cost per employee saved\n\nMake it clean, professional, mobile-friendly. Dark theme. No login needed.`
+      },
+      {
+        type: "what-happens",
+        label: "What You'll See",
+        text: "A working web app in minutes. You can share the link with your team. Need to add a field? Just describe it. Want to change the colours? Ask. The iteration loop is fast and conversational."
+      },
+      {
+        type: "tip",
+        label: "When to Use This",
+        text: "Internal calculators, simple dashboards, data entry forms, presentation tools, team voting apps, project trackers. Anything where you'd normally ask IT for a spreadsheet or wait 6 weeks for a dev team. Start small — one tool that solves one annoyance."
+      }
+    ]
+  }
+];
+
+// BREAK POINT — inserted between stage 8 and stage 9
+const breakPoint = {
+  afterStageIndex: 7, // after Vibe Coding (0-indexed)
+  title: "Now Let Me Show You Something",
+  text: "Everything so far works in any AI tool. What comes next is different — Claude Cowork connects AI directly to your files, calendar, email, and drive. It creates real documents, automates recurring tasks, and becomes your daily operating environment. Let me demo it for you."
+};
+
+const postBreakStages = [
+  {
+    id: "signup",
+    title: "Get Set Up",
+    subtitle: "Install Claude and go Pro",
+    intro: "To use Cowork, you need Claude Desktop with a Pro subscription. Here's the setup path.",
+    cards: [
+      {
+        type: "tip",
+        label: "Setup Steps",
+        text: "1. Go to claude.ai/download and install Claude Desktop\n2. Sign in with your email\n3. Subscribe to Claude Pro (USD $20/month) — this is required for Cowork\n4. Open Claude Desktop — you'll see the chat interface\n5. In the next stage, we'll enable Cowork and connect your apps"
+      },
+      {
+        type: "what-happens",
+        label: "Why Pro?",
+        text: "The free tier is limited in messages and doesn't include Cowork. Pro gives you higher usage limits, access to all model tiers (Haiku, Sonnet, Opus), and Cowork mode which connects to your files and apps. For business use, Pro also means your conversations are not used for training."
+      }
+    ]
+  },
+  {
+    id: "cowork-setup",
+    title: "Connect Your Apps",
+    subtitle: "Turn Claude into your operating environment",
+    intro: "Cowork connects Claude to the tools you actually use. Once connected, it can read your calendar, search your email, access your files, and create real documents — all from conversation.",
+    cards: [
+      {
+        type: "tip",
+        label: "Connection Checklist",
+        text: "In Claude Desktop, go to Settings and enable Cowork mode. Then connect:\n\n\u2610 Google Drive — so Claude can read and create files in your Drive\n\u2610 Gmail — so Claude can search your email and draft responses\n\u2610 Google Calendar — so Claude can see your schedule and prep for meetings\n\u2610 Select a working folder on your computer — where Claude saves files you create together\n\nEach connection asks for your permission. You control what Claude can access."
+      },
+      {
+        type: "copy-prompt",
+        label: "Custom Instructions Interview — Run This in Cowork",
+        text: `I want you to interview me to build a profile for my Custom Instructions — the persistent context that shapes every conversation we have.\n\nAsk me about:\n1. My role, company, and what I actually spend my time on\n2. My communication style and preferences\n3. The software and tools I use daily\n4. The types of tasks I'll most often bring to you\n5. Things that annoy me in AI responses (formatting, tone, assumptions)\n\nAsk one question at a time. After the interview, generate a clean profile I can paste into my Custom Instructions.`
+      },
+      {
+        type: "copy-prompt",
+        label: "Your First Real Cowork Task",
+        text: `Don't do anything yet. Explain what you think I'm asking for and wait for me to confirm.\n\nLook at my calendar for this week and:\n1. Identify any meetings that don't have agendas or prep notes\n2. For each one, draft a brief prep note based on what you can find (participants, previous meetings, relevant emails)\n3. Flag any scheduling conflicts or back-to-back meetings with no buffer\n4. Suggest one meeting I could probably decline or shorten`
+      },
+      {
+        type: "what-happens",
+        label: "What You'll See",
+        text: "Cowork reads your actual calendar, cross-references with your email, and produces prep notes for real meetings. Files appear in your selected folder. Links are clickable. This is AI as infrastructure — connected, contextual, and working with your real data."
+      }
+    ]
+  }
+];
+
+
+// === RENDERING ===
+
+const stagesEl = document.getElementById('stages');
+const progressBar = document.getElementById('progressBar');
+const allStages = [...stages];
+let breakInserted = false;
+let globalStageIndex = 0;
+const stageElements = [];
+
+// Render pre-break stages
+stages.forEach((stage, i) => {
+  renderStage(stage, globalStageIndex);
+  globalStageIndex++;
+});
+
+// Render break
+renderBreak();
+
+// Render post-break stages
+postBreakStages.forEach((stage, i) => {
+  renderStage(stage, globalStageIndex);
+  globalStageIndex++;
+});
+
+function renderStage(stage, idx) {
+  // Progress dot
+  const dot = document.createElement('div');
+  dot.className = 'progress-dot';
+  dot.dataset.index = idx;
+  progressBar.appendChild(dot);
+
+  const el = document.createElement('div');
+  el.className = 'stage';
+  el.dataset.index = idx;
+
+  let bodyHtml = '';
+  if (stage.customRender) {
+    bodyHtml = `<div class="stage-intro">${stage.intro}</div><div id="custom-${stage.id}"></div>`;
+  } else {
+    bodyHtml = `<div class="stage-intro">${stage.intro}</div>` + renderCards(stage.cards);
+  }
+
+  el.innerHTML = `
+    <div class="stage-header" onclick="toggleStage(${idx})">
+      <div class="stage-number">${idx + 1}</div>
+      <div>
+        <div class="stage-title">${stage.title}</div>
+        <div class="stage-subtitle">${stage.subtitle}</div>
+      </div>
+      <div class="stage-chevron">\u25b6</div>
+    </div>
+    <div class="stage-body">${bodyHtml}</div>
+  `;
+
+  stagesEl.appendChild(el);
+  stageElements.push(el);
+
+  // Run custom renderer after DOM insertion
+  if (stage.customRender && stage.renderFn) {
+    setTimeout(() => window[stage.renderFn](), 0);
+  }
+}
+
+function renderBreak() {
+  const dot = document.createElement('div');
+  dot.className = 'progress-dot break-dot';
+  progressBar.appendChild(dot);
+
+  const el = document.createElement('div');
+  el.className = 'break-divider';
+  el.innerHTML = `<h2>${breakPoint.title}</h2><p>${breakPoint.text}</p>`;
+  stagesEl.appendChild(el);
+}
+
+function renderCards(cards) {
+  return cards.map(card => {
+    if (card.html) {
+      return `<div class="prompt-card">
+        <div class="prompt-label ${card.type}">${getIcon(card.type)} ${card.label}</div>
+        ${card.html}
+      </div>`;
+    }
+
+    const isCopiable = card.type === 'copy-prompt' || card.type === 'voice-script';
+    const textClass = card.type === 'voice-script' ? 'voice-text' :
+                      (card.type === 'what-happens' || card.type === 'tip') ? 'outcome-text' : 'prompt-text';
+    const copyBtn = isCopiable ? `<button class="copy-btn" onclick="copyText(this)">Copy</button>` : '';
+
+    return `<div class="prompt-card">
+      ${copyBtn}
+      <div class="prompt-label ${card.type}">${getIcon(card.type)} ${card.label}</div>
+      <div class="${textClass}">${card.text}</div>
+    </div>`;
+  }).join('');
+}
+
+function getIcon(type) {
+  switch(type) {
+    case 'copy-prompt': return '>';
+    case 'voice-script': return '\u{1f3a4}';
+    case 'tip': return '\u{1f4a1}';
+    case 'what-happens': return '\u{1f441}';
+    case 'table-card': return '\u{1f4ca}';
+    default: return '>';
+  }
+}
+
+function toggleStage(index) {
+  const stage = document.querySelector(`.stage[data-index="${index}"]`);
+  if (!stage) return;
+  const wasOpen = stage.classList.contains('open');
+  document.querySelectorAll('.stage').forEach(s => s.classList.remove('open'));
+  document.querySelectorAll('.progress-dot').forEach(d => d.classList.remove('active'));
+  if (!wasOpen) {
+    stage.classList.add('open');
+    for (let i = 0; i <= index; i++) {
+      const d = document.querySelector(`.progress-dot[data-index="${i}"]`);
+      if (d) d.classList.add('active');
+    }
+  }
+}
+
+function copyText(btn) {
+  const card = btn.closest('.prompt-card');
+  const textEl = card.querySelector('.prompt-text, .voice-text');
+  if (!textEl) return;
+  navigator.clipboard.writeText(textEl.textContent).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// === CUSTOM RENDERERS ===
+
+window.renderAILandscape = function() {
+  const container = document.getElementById('custom-ai-landscape');
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="prompt-card">
+      <div class="prompt-label tip">\u{1f4a1} What Do You Use at Work?</div>
+      <div class="checkbox-group">
+        <label class="checkbox-label" id="cb-o365">
+          <input type="checkbox" onchange="updateEnv('o365', this.checked)"> Microsoft 365 (Outlook, Word, Excel, Teams, Copilot)
+        </label>
+        <label class="checkbox-label" id="cb-google">
+          <input type="checkbox" onchange="updateEnv('google', this.checked)"> Google Workspace (Gmail, Docs, Sheets, Meet, Gemini)
+        </label>
+        <label class="checkbox-label" id="cb-chatgpt">
+          <input type="checkbox" onchange="updateEnv('chatgpt', this.checked)"> ChatGPT (OpenAI)
+        </label>
+      </div>
+    </div>
+
+    <div class="prompt-card" id="landscape-prompt-card">
+      <button class="copy-btn" onclick="copyText(this)">Copy</button>
+      <div class="prompt-label copy-prompt">> Copy & Paste This Prompt (Personalised to Your Ticks)</div>
+      <div class="prompt-text" id="landscape-prompt"></div>
+    </div>
+
+    <div class="prompt-card">
+      <div class="prompt-label what-happens">\u{1f441} What You'll See</div>
+      <div class="outcome-text">A clear map of your AI toolkit. Each tool has strengths — Copilot for document formatting and Excel, Gemini for search and email triage, ChatGPT for image generation, Claude for reasoning and writing quality. The prompt surfaces what you have, what's genuinely useful, and where the gaps are.</div>
+    </div>
+
+    <div class="prompt-card">
+      <div class="prompt-label tip">\u{1f4a1} The Paid vs. Free Distinction</div>
+      <div class="outcome-text">Free AI tiers may use your data for training. Paid tiers (Claude Pro, Copilot for Business, ChatGPT Team) typically don't. For business use, the paid tier isn't about features — it's about your data staying yours. Ask your IT team which tiers you're on.</div>
+    </div>
+
+    <div class="prompt-card">
+      <div class="prompt-label tip">\u{1f4a1} Images for Presentations and Documents</div>
+      <div class="outcome-text">Need a custom diagram, hero graphic, or illustration for a deck or report? ChatGPT (via DALL-E) and Gemini (via Imagen) can generate images from descriptions. Generate it there, download, and drop it into your Word doc or PowerPoint. Use each tool for what it does best — don't fight a tool's limitations when another handles it natively.</div>
+    </div>
+  `;
+
+  updateLandscapePrompt();
+};
+
+window.updateEnv = function(key, val) {
+  userEnv[key] = val;
+  const label = document.getElementById('cb-' + key);
+  if (label) label.classList.toggle('checked', val);
+  updateLandscapePrompt();
+  updateCreatePrompt();
+};
+
+function updateLandscapePrompt() {
+  const el = document.getElementById('landscape-prompt');
+  if (!el) return;
+
+  let tools = [];
+  if (userEnv.o365) tools.push('Microsoft 365 (including Copilot)');
+  if (userEnv.google) tools.push('Google Workspace (including Gemini)');
+  if (userEnv.chatgpt) tools.push('ChatGPT');
+
+  const toolLine = tools.length > 0
+    ? `I use ${tools.join(' and ')} at work.`
+    : `I use [Microsoft 365 / Google Workspace / both] at work. I [do / don't] have access to ChatGPT.`;
+
+  el.textContent = `${toolLine} Our company has roughly [X] employees.\n\nCan you:\n1. List the AI features I likely already have access to through my existing software\n2. Tell me what each one is genuinely useful for (not marketing claims)\n3. Identify the gaps — what can't these built-in tools do well?\n4. Be honest about where each tool's strengths lie and where other tools might be better suited\n\nBe honest about limitations on all sides. I want a realistic picture, not a sales pitch for any one tool.`;
+}
+
+window.renderCreateSomething = function() {
+  const container = document.getElementById('custom-create-something');
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="prompt-card" id="create-prompt-card">
+      <button class="copy-btn" onclick="copyText(this)">Copy</button>
+      <div class="prompt-label copy-prompt">> Create a Board-Ready Document (Adapted to Your Suite)</div>
+      <div class="prompt-text" id="create-prompt"></div>
+    </div>
+
+    <div class="prompt-card">
+      <div class="prompt-label what-happens">\u{1f441} What You'll See</div>
+      <div class="outcome-text" id="create-outcome"></div>
+    </div>
+
+    <div class="prompt-card">
+      <div class="prompt-label tip">\u{1f4a1} Adding Visuals</div>
+      <div class="outcome-text">Need a chart, diagram, or custom graphic? Use ChatGPT or Gemini to generate it (\"Create a simple flowchart showing our 3-step approval process, professional style, blue and white\"). Download the image and insert it into your document or slides. AI-generated images + AI-written content = professional output without a design team.</div>
+    </div>
+
+    <div class="prompt-card">
+      <button class="copy-btn" onclick="copyText(this)">Copy</button>
+      <div class="prompt-label copy-prompt">> Quick Presentation — Turn Notes Into Slides</div>
+      <div class="prompt-text" id="slides-prompt"></div>
+    </div>
+  `;
+
+  updateCreatePrompt();
+};
+
+function updateCreatePrompt() {
+  const promptEl = document.getElementById('create-prompt');
+  const outcomeEl = document.getElementById('create-outcome');
+  const slidesEl = document.getElementById('slides-prompt');
+  if (!promptEl) return;
+
+  if (userEnv.google) {
+    promptEl.textContent = `I need to create a one-page executive brief for my leadership team on [topic].\n\nStructure it as:\n1. Situation (2-3 sentences — what's happening)\n2. Implications (3 bullet points — why it matters to us)\n3. Recommendation (1 clear action with timeline)\n4. Next Steps (who does what by when)\n\nKeep it to one page. Use clear, direct language. No jargon. This needs to be something I can paste into a Google Doc and send in 5 minutes.`;
+    if (outcomeEl) outcomeEl.textContent = "You'll get clean, structured text that you can paste directly into Google Docs. Format it with the built-in heading styles, or ask Gemini in Google Docs to help with formatting. The content is the hard part — formatting is the easy part.";
+    if (slidesEl) slidesEl.textContent = `I have rough notes from a meeting. Turn them into a 5-slide presentation outline I can build in Google Slides.\n\nSlide 1: Title + one-sentence framing\nSlide 2: The situation (3 key facts)\nSlide 3: The options (2-3 paths forward)\nSlide 4: Recommended path + rationale\nSlide 5: Next steps + timeline\n\nFor each slide, give me the headline and 3-4 bullet points of content. Keep it tight — this is a 10-minute presentation, not a thesis.\n\nMy notes:\n[paste your meeting notes here]`;
+  } else if (userEnv.o365) {
+    promptEl.textContent = `I need to create a one-page executive brief for my leadership team on [topic].\n\nStructure it as:\n1. Situation (2-3 sentences — what's happening)\n2. Implications (3 bullet points — why it matters to us)\n3. Recommendation (1 clear action with timeline)\n4. Next Steps (who does what by when)\n\nKeep it to one page. Use clear, direct language. No jargon. This needs to be something I can paste into Word and send in 5 minutes. If I have Copilot in Word, I can ask it to format this — just give me the content.`;
+    if (outcomeEl) outcomeEl.textContent = "You'll get clean, structured text ready to paste into Microsoft Word. If you have Copilot, you can ask it to format with your company template. If not, apply Heading 1/2 styles manually — takes 30 seconds. The AI did the thinking; you just need to dress it up.";
+    if (slidesEl) slidesEl.textContent = `I have rough notes from a meeting. Turn them into a 5-slide presentation outline I can build in PowerPoint.\n\nSlide 1: Title + one-sentence framing\nSlide 2: The situation (3 key facts)\nSlide 3: The options (2-3 paths forward)\nSlide 4: Recommended path + rationale\nSlide 5: Next steps + timeline\n\nFor each slide, give me the headline and 3-4 bullet points of content. Keep it tight — this is a 10-minute presentation, not a thesis. If I have Copilot in PowerPoint, I'll use it to build from this outline.\n\nMy notes:\n[paste your meeting notes here]`;
+  } else {
+    promptEl.textContent = `I need to create a one-page executive brief for my leadership team on [topic].\n\nStructure it as:\n1. Situation (2-3 sentences — what's happening)\n2. Implications (3 bullet points — why it matters to us)\n3. Recommendation (1 clear action with timeline)\n4. Next Steps (who does what by when)\n\nKeep it to one page. Use clear, direct language. No jargon. This needs to be something I can paste into [Word / Google Docs] and send in 5 minutes.`;
+    if (outcomeEl) outcomeEl.textContent = "You'll get clean, structured text ready to paste into your document tool of choice. The AI does the thinking and structuring — you handle the formatting. Tick your software suite in Stage 3 to get tailored instructions.";
+    if (slidesEl) slidesEl.textContent = `I have rough notes from a meeting. Turn them into a 5-slide presentation outline.\n\nSlide 1: Title + one-sentence framing\nSlide 2: The situation (3 key facts)\nSlide 3: The options (2-3 paths forward)\nSlide 4: Recommended path + rationale\nSlide 5: Next steps + timeline\n\nFor each slide, give me the headline and 3-4 bullet points of content. Keep it tight — this is a 10-minute presentation, not a thesis.\n\nMy notes:\n[paste your meeting notes here]`;
+  }
+}
+
+// Open first stage by default
+toggleStage(0);
+</script>
+</body>
+</html>

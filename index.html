@@ -237,6 +237,39 @@ const stages = [
     ]
   },
   {
+    id: "voice-first",
+    title: "Voice-First Workflow",
+    subtitle: "Talk, don't type — start with Wispr Flow",
+    intro: "Most executives think faster than they type. Wispr Flow turns any text field on your Mac into a voice input — it's the fastest way to get thoughts into AI.",
+    cards: [
+      {
+        type: "voice-script",
+        label: "Why Voice-First Changes Everything",
+        text: "Executives think faster than they type, which means the keyboard often becomes the bottleneck between insight and action. Voice memos capture the emphasis, hesitation, context, and nuance that typing tends to flatten. Instead of trying to write a polished prompt from a blank box, dictate the messy 60-second version and let AI clean it up. That is faster, more natural, and usually more honest."
+      },
+      {
+        type: "voice-script",
+        label: "Install Wispr Flow Now (2 minutes)",
+        text: `Step 1: Go to wispr.ai and download Wispr Flow. The free tier is enough to start.
+Step 2: Install and launch it. It sits in your menu bar.
+Step 3: In any text field - Chrome, Safari, email, Notion, anywhere - hold the Fn key, or your chosen hotkey, to start dictating.
+Step 4: Speak naturally. Wispr Flow transcribes and cleans up in real time. Hit Fn again to stop.
+
+It works in every app on your Mac. No switching tools.`
+      },
+      {
+        type: "copy-prompt",
+        label: "Dictate This Right Now",
+        text: "The one thing on my plate this week that I keep putting off is... Clean up what I just said. Then extract the core issue in one sentence, explain why I am probably avoiding it, and give me the smallest next step I could take in 30 minutes."
+      },
+      {
+        type: "what-happens",
+        label: "What Just Happened",
+        text: "You just used voice-first AI prompting for the first time. Wispr Flow captured your speech and dropped it into the prompt. The AI cleaned the transcription and extracted signal from noise. This is now repeatable in every tool you use - emails, docs, chat, AI assistants, all of it."
+      }
+    ]
+  },
+  {
     id: "ai-landscape",
     title: "Your AI Landscape",
     subtitle: "Map what you already have access to",
@@ -247,67 +280,64 @@ const stages = [
   {
     id: "model-modes",
     title: "How AI Models Work",
-    subtitle: "Speed, quality, and knowing which to use",
-    intro: "Every major AI platform offers models at different speeds and capabilities. Knowing when to use which is the difference between a quick answer and a considered analysis. Here's the landscape across all three platforms.",
+    subtitle: "Speed, quality, and conscious model selection",
+    intro: "Every major AI platform offers models at different tiers — fast and cheap, or slow and deep. Knowing which to reach for is itself an executive skill. Here's the landscape and what each tier is built for.",
     cards: [
       {
         type: "table-card",
-        label: "AI Model Comparison — March 2026",
-        html: `<table class="comparison-table">
-          <tr><th>Tier</th><th>Claude</th><th>ChatGPT</th><th>Gemini</th><th>Best For</th></tr>
-          <tr><td><strong>Fast</strong></td><td>Haiku</td><td>GPT-4o mini</td><td>Gemini Flash</td><td>Quick lookups, reformatting, simple questions. Seconds.</td></tr>
-          <tr><td><strong>Standard</strong></td><td>Sonnet</td><td>GPT-4o</td><td>Gemini Pro</td><td>Day-to-day work — writing, analysis, email, summaries. The workhorse.</td></tr>
-          <tr><td><strong>Reasoning</strong></td><td>Opus</td><td>o1 / o3</td><td>Gemini Ultra</td><td>Complex decisions, strategy, multi-step analysis. Shows working.</td></tr>
-          <tr><td><strong>Images</strong></td><td>—</td><td>DALL-E / GPT-4o</td><td>Imagen</td><td>Generate images for docs, presentations, marketing.</td></tr>
-        </table>`
+        label: "AI Model Comparison — July 2026",
+        html: `<p class='table-label'>AI Model Comparison — July 2026</p>
+<table class='comparison-table'>
+  <thead>
+    <tr>
+      <th>Tier</th>
+      <th>Claude</th>
+      <th>OpenAI</th>
+      <th>Best For</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Fast</strong></td>
+      <td>Claude Haiku 4.5</td>
+      <td>GPT-5.6 Luna</td>
+      <td>Quick lookups, reformatting, simple drafts. Light in context — holds your question, answers fast, moves on. Seconds not minutes.</td>
+    </tr>
+    <tr>
+      <td><strong>Standard</strong></td>
+      <td>Claude Sonnet 5</td>
+      <td>GPT-5.6 Terra</td>
+      <td>Day-to-day analysis, writing, email, summaries. Balanced depth and cost — the workhorse tier.</td>
+    </tr>
+    <tr>
+      <td><strong>Flagship</strong></td>
+      <td>Claude Opus 4.8</td>
+      <td>GPT-5.6 Sol</td>
+      <td>Complex decisions, strategy, multi-step analysis. Heaviest in context — holds the full picture, reasons about what you didn't ask, shows working.</td>
+    </tr>
+    <tr>
+      <td><strong>Creative</strong></td>
+      <td>Claude Fable 5</td>
+      <td>—</td>
+      <td>Long-form narrative, brand voice, creative strategy. Claude's character and creative model.</td>
+    </tr>
+  </tbody>
+</table>`
       },
       {
         type: "copy-prompt",
-        label: "Try This Same Question Across Different Tiers",
-        text: `What are the three biggest risks to a mid-market services company ($50-200M revenue) in Australia over the next 12 months? For each risk, give me one specific action I could take this quarter to mitigate it.\n\nBe specific to Australia and the mid-market — not generic global advice.`
+        label: "Try This Across All Three Tiers",
+        text: `What are the three biggest risks to a mid-market services company ($50-200M revenue) in Australia over the next 12 months? For each risk, give me one specific action I could take this quarter to mitigate it, and include your confidence level (high / medium / low) with one sentence explaining why.`
       },
       {
         type: "what-happens",
-        label: "What You'll See",
-        text: "Fast tier: Quick bullet points, broadly correct but generic.\nStandard tier: Solid analysis with Australian-specific context, reasonable actions.\nReasoning tier: Nuanced thinking that considers second-order effects, industry-specific risks, and actions that account for implementation reality."
+        label: "What You'll See \u2014 and What It Teaches You",
+        text: "Fast tier (Haiku / Luna): quick, confident, light in context. It holds your question, answers it, and moves on. That is good enough for 80% of everyday tasks.\n\nStandard tier (Sonnet / Terra): structured, balanced, and appropriately hedged. It is the workhorse tier \u2014 the right default for most analysis, planning, and decision support.\n\nFlagship tier (Opus / Sol): heaviest in context. It can hold the whole problem, reason through second-order effects, and point out what you did not ask. It is slower and more expensive, so reach for it when the decision actually matters.\n\nRouting is the skill. The value is not just writing better prompts \u2014 it is knowing which tier to use. Use fast models for quick lookups and drafts, standard models for most analysis and decisions, and flagship models when the stakes are high and you want a model that pushes back."
       },
       {
         type: "tip",
         label: "Image Generation for Business",
         text: "Need visuals for a presentation or document? ChatGPT (DALL-E) and Gemini (Imagen) can generate custom images — diagrams, illustrations, hero graphics. Describe what you need, generate it there, then drop it into your Word doc or PowerPoint. Use each tool for what it does best."
-      }
-    ]
-  },
-  {
-    id: "voice-first",
-    title: "Voice-First Workflow",
-    subtitle: "Talk, don't type",
-    intro: "Most executives think faster than they type. Voice memos are the fastest way to get your thoughts into AI. Record a rambling voice note, transcribe it, then let AI extract the signal from the noise.",
-    cards: [
-      {
-        type: "voice-script",
-        label: "Quick 5 — Your First Voice-to-AI Exercise (Under 5 Minutes)",
-        text: "Step 1: Open your phone's voice recorder (or Voice Memos on iPhone).\nStep 2: Record yourself answering this question for 60 seconds: \"What's the one thing on my plate right now that I keep avoiding? Why am I avoiding it? What would 'done' look like?\"\nStep 3: Use your phone's built-in transcription, or paste the audio into ChatGPT/Gemini.\nStep 4: Paste the transcript into any AI with the prompt below.\n\nThat's it. Five minutes, start to finish."
-      },
-      {
-        type: "copy-prompt",
-        label: "Quick 5 Prompt — Paste After Your 60-Second Recording",
-        text: `I just recorded a quick voice memo about something I've been avoiding at work. Clean up the transcription and give me:\n1. The core issue in one sentence\n2. Why I'm probably avoiding it (based on what I said)\n3. The smallest possible next step I could take in the next 30 minutes\n\nDon't overthink it. Keep it short.\n\n[paste transcription here]`
-      },
-      {
-        type: "voice-script",
-        label: "Full Voice Memo Script — Record This (90 Seconds)",
-        text: "\"I just came out of the leadership meeting and there are a few things I need to think through. First, [describe a decision you're facing]. The options seem to be [option A] or [option B], but I'm not sure we've thought about [concern]. Second, I told [person] I'd get back to them about [topic] by [date] — I need to figure out what to say. And third, there was something about [project] that didn't sit right with me but I can't quite put my finger on it — something about the timeline or the resourcing.\""
-      },
-      {
-        type: "copy-prompt",
-        label: "Full Voice Memo Prompt — Paste After Transcribing",
-        text: `Clean up this voice memo transcription. I was thinking out loud after a meeting.\n\nExtract:\n1. Decisions I need to make (with the options I mentioned)\n2. Commitments I made to people (with deadlines)\n3. Concerns or gut feelings I flagged (even vague ones — capture them)\n4. Suggested next actions for each item\n\nDon't add anything I didn't say. Don't resolve my uncertainties for me — just organise them.\n\n[paste transcription here]`
-      },
-      {
-        type: "what-happens",
-        label: "What You'll See",
-        text: "Your ramble becomes a structured action list. Decisions are separated from commitments. Vague concerns are captured rather than dismissed. You get clarity without losing nuance. Works in any AI tool."
       }
     ]
   },
